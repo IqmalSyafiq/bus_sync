@@ -162,7 +162,6 @@ class HomePageState extends ConsumerState<HomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
                   child: ref.watch(userRoleProvider).when(
                         data: (userRole) {
-                          Logger().w(userRole);
                           // return _buildQueryContainer();
                           if (userRole != '' && userRole == 'user') {
                             return _buildQueryContainer();
