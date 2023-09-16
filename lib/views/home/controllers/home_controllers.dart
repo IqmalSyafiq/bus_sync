@@ -22,6 +22,16 @@ class Bus extends Object {
   int eta;
 }
 
+class BusStation extends Object {
+  BusStation({
+    required this.name,
+    required this.location,
+  });
+
+  String name;
+  String location;
+}
+
 final userRoleProvider = StreamProvider.autoDispose<String?>((ref) async* {
   final collectionRef = FirebaseFirestore.instance.collection('users');
   final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -207,3 +217,79 @@ Future<void> updateBusLocation(String plateNumber, String newLocation) async {
     Logger().e(error);
   }
 }
+
+Future<List<Bus>> fetchBussesFromFirestore() async {
+  CollectionReference busses = FirebaseFirestore.instance.collection('busses');
+
+  QuerySnapshot querySnapshot = await busses.get();
+
+  List<Bus> bussesList = [];
+  for (var doc in querySnapshot.docs) {
+    var data = doc.data() as Map<String, dynamic>;
+    var bus = Bus(
+      idNumber: data['id_number'],
+      plateNumber: data['plate_number'],
+      driver: data['driver'],
+      currentLocation: data['current_location'],
+      eta: data['ETA'],
+    );
+    bussesList.add(bus);
+  }
+
+  return bussesList;
+}
+
+final fetchBussesProvider = FutureProvider<List<Bus>>((ref) async {
+  CollectionReference busses = FirebaseFirestore.instance.collection('busses');
+
+  QuerySnapshot querySnapshot = await busses.get();
+
+  List<Bus> bussesList = [];
+  for (var doc in querySnapshot.docs) {
+    var data = doc.data() as Map<String, dynamic>;
+    var bus = Bus(
+      idNumber: data['id_number'],
+      plateNumber: data['plate_number'],
+      driver: data['driver'],
+      currentLocation: data['current_location'],
+      eta: data['ETA'],
+    );
+    bussesList.add(bus);
+  }
+
+  return bussesList;
+});
+
+Future<List<BusStation>> fetchLocationsFromFirestore() async {
+  CollectionReference locations = FirebaseFirestore.instance.collection('bus_stations');
+
+  QuerySnapshot querySnapshot = await locations.get();
+
+  List<BusStation> locationList = [];
+  for (var doc in querySnapshot.docs) {
+    var data = doc.data() as Map<String, dynamic>;
+    var busStation = BusStation(
+      name: data['name'],
+      location: data['location'],
+    );
+    locationList.add(busStation);
+  }
+
+  return locationList;
+}
+
+final locationsProvider = FutureProvider<List<BusStation>>((ref) async {
+  final locations = FirebaseFirestore.instance.collection('bus_stations');
+
+  final querySnapshot = await locations.get();
+
+  final locationList = querySnapshot.docs.map((doc) {
+    final data = doc.data();
+    return BusStation(
+      name: data['name'],
+      location: data['location'],
+    );
+  }).toList();
+
+  return locationList;
+});

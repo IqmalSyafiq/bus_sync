@@ -43,7 +43,6 @@ class HomePageState extends ConsumerState<HomePage> {
   List<LatLng> polygonLatLngs = <LatLng>[];
 
   Future<List<BusStation>>? busStations;
-  Future<List<Bus>>? busses;
 
   int _polygonIdCounter = 1;
   int _polylineIdCounter = 1;
@@ -62,7 +61,6 @@ class HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     busStations = fetchLocationsFromFirestore();
-    busses = fetchBussesFromFirestore();
 
     _setMarker(const LatLng(3.105690, 101.639120));
   }
@@ -230,20 +228,9 @@ class HomePageState extends ConsumerState<HomePage> {
             });
           }));
 
-  Widget _buildBusStationsDropdown() => FutureBuilder<List<BusStation>>(
-        future: busStations,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CupertinoActivityIndicator();
-          }
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Text('No data available.');
-          }
-
-          List<String> locationNames = snapshot.data!.map((busStation) => busStation.name).toList();
+  Widget _buildBusStationsDropdown() => ref.watch(locationsProvider).when(
+        data: (locations) {
+          List<String> locationNames = locations.map((busStation) => busStation.name).toList();
 
           return CustomDropdown(
             hintText: 'Your current location',
@@ -255,7 +242,7 @@ class HomePageState extends ConsumerState<HomePage> {
             controller: _busStationController,
             onChanged: (selectedName) {
               // Find the BusStation object that matches the selected name
-              BusStation? selectedStation = snapshot.data!.firstWhere(
+              BusStation? selectedStation = locations.firstWhere(
                 (station) => station.name == selectedName,
                 // orElse: () => null,
               );
@@ -266,23 +253,13 @@ class HomePageState extends ConsumerState<HomePage> {
             },
           );
         },
+        loading: CupertinoActivityIndicator.new,
+        error: (error, stackTrace) => Text(error.toString()),
       );
 
-  Widget _buildBussesDropdown() => FutureBuilder<List<Bus>>(
-        future: busses,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CupertinoActivityIndicator();
-          }
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Text('No data available.');
-          }
-
-          List<String> busIds = snapshot.data!.map((bus) => bus.idNumber).toList();
-
+  Widget _buildBussesDropdown() => ref.watch(fetchBussesProvider).when(
+        data: (bussesData) {
+          List<String> busIds = bussesData.map((bus) => bus.idNumber).toList();
           return CustomDropdown(
               hintText: 'Select available bus',
               hintStyle: AppTextStyles.medium12(),
@@ -293,7 +270,7 @@ class HomePageState extends ConsumerState<HomePage> {
               controller: _busController,
               onChanged: (selectedBus) {
                 // Find the BusStation object that matches the selected name
-                Bus? selectedBusInfo = snapshot.data!.firstWhere(
+                Bus? selectedBusInfo = bussesData.firstWhere(
                   (bus) => bus.idNumber == selectedBus,
                   // orElse: () => null,
                 );
@@ -308,6 +285,8 @@ class HomePageState extends ConsumerState<HomePage> {
                 });
               });
         },
+        loading: CupertinoActivityIndicator.new,
+        error: (error, stackTrace) => Text(error.toString()),
       );
 
   Widget _buildCheckEtaButton() => Center(
