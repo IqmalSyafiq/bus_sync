@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "264018204613",
+    "project_id": "bussync",
+    "storage_bucket": "bussync.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264018204613:android:dce26eeeb1d5a0daa55dac",
+        "android_client_info": {
+          "package_name": "com.example.bus_sync"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264018204613-2e8e2k2hb20m9gij6op7itqrcv8qr5p5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bus_sync",
+            "certificate_hash": "b9b628a1259186ff63ff2dfff19a5b3a19cd9fad"
+          }
+        },
+        {
+          "client_id": "264018204613-i3h683tjvr5nre33csdc8faggspidrmb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwSxjg6xIkYGH6Apm6vNma4cr6tRBTXZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264018204613-i3h683tjvr5nre33csdc8faggspidrmb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "264018204613-5ts82eulrgrlg1jr9e2p4t9agdhrl6o0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.busSync.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
